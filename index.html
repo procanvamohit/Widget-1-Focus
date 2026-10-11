@@ -8,22 +8,17 @@
         :root {
             --bg-color: #000000;
             --text-color: #ffffff;
-            --accent-color: #ff0000;
+            --accent-color: #ffffff;
             --gray-muted: #666666;
-            --card-bg: #111111;
-        }
-
-        @font-face {
-            font-family: 'NDOT';
-            src: local('Arial'); /* Fallback; Nothing OS applies its native dot font */
+            --card-bg: #0b0b0b;
         }
 
         body {
             margin: 0;
-            padding: 16px;
+            padding: 0;
             background-color: var(--bg-color);
             color: var(--text-color);
-            font-family: 'NDOT', monospace, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -33,30 +28,37 @@
 
         .widget-container {
             width: 100%;
-            max-width: 360px;
+            max-width: 400px;
+            height: 100vh;
+            max-height: 400px;
             background: var(--card-bg);
-            border: 1px solid #222;
-            border-radius: 24px;
             padding: 24px;
             box-sizing: border-box;
-            position: relative;
-            min-height: 380px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            border-radius: 0;
+        }
+
+        /* Seamless integration styling for home screen widgets */
+        @media (min-width: 480px) {
+            .widget-container {
+                border: 1px solid #1a1a1a;
+                border-radius: 32px;
+                height: 400px;
+            }
         }
 
         .header-controls {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
         }
 
         .mode-toggle {
             display: flex;
-            background: #222;
-            border-radius: 12px;
+            background: #1c1c1e;
+            border-radius: 20px;
             padding: 4px;
         }
 
@@ -64,31 +66,33 @@
             background: transparent;
             border: none;
             color: var(--gray-muted);
-            padding: 6px 12px;
-            border-radius: 8px;
+            padding: 8px 16px;
+            border-radius: 16px;
             cursor: pointer;
-            font-weight: bold;
-            font-size: 12px;
+            font-weight: 600;
+            font-size: 13px;
+            letter-spacing: 0.5px;
             transition: all 0.2s ease;
         }
 
         .mode-btn.active {
-            background: var(--text-color);
-            color: var(--bg-color);
+            background: #ffffff;
+            color: #000000;
         }
 
         .audio-control {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 12px;
+            gap: 10px;
+            font-size: 13px;
+            color: #e5e5ea;
         }
 
         .switch {
             position: relative;
             display: inline-block;
-            width: 40px;
-            height: 20px;
+            width: 46px;
+            height: 26px;
         }
 
         .switch input {
@@ -104,25 +108,25 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: #333;
-            transition: .3s;
-            border-radius: 20px;
+            background-color: #3a3a3c;
+            transition: .2s;
+            border-radius: 26px;
         }
 
         .slider:before {
             position: absolute;
             content: "";
-            height: 14px;
-            width: 14px;
+            height: 20px;
+            width: 20px;
             left: 3px;
             bottom: 3px;
             background-color: white;
-            transition: .3s;
+            transition: .2s;
             border-radius: 50%;
         }
 
         input:checked + .slider {
-            background-color: var(--accent-color);
+            background-color: #34c759;
         }
 
         input:checked + .slider:before {
@@ -131,60 +135,60 @@
 
         .timer-display {
             text-align: center;
-            margin: 20px 0;
+            margin: auto 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         .time {
-            font-size: 54px;
-            letter-spacing: -1px;
-            font-weight: bold;
+            font-size: 72px;
+            font-weight: 700;
+            letter-spacing: -2px;
             font-variant-numeric: tabular-nums;
+            line-height: 1;
+            margin-bottom: 12px;
         }
 
         .time-setter {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 16px;
-            margin-top: 10px;
+            gap: 20px;
         }
 
         .set-btn {
-            background: #222;
+            background: #1c1c1e;
             border: none;
             color: var(--text-color);
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             cursor: pointer;
-            font-size: 18px;
+            font-size: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        .set-btn:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-        }
-
         .action-container {
             display: flex;
             justify-content: center;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .main-btn {
             background: var(--text-color);
             color: var(--bg-color);
             border: none;
-            padding: 12px 32px;
-            border-radius: 30px;
-            font-weight: bold;
+            padding: 14px 0;
+            border-radius: 28px;
+            font-weight: 700;
             font-size: 16px;
             cursor: pointer;
-            width: 60%;
-            box-shadow: 0 4px 12px rgba(255,255,255,0.1);
+            width: 80%;
+            letter-spacing: 0.5px;
         }
 
         .main-btn.running {
@@ -196,17 +200,16 @@
         .footer {
             display: flex;
             justify-content: space-between;
-            align-items: flex-end;
-            font-size: 11px;
+            align-items: center;
+            font-size: 12px;
             color: var(--gray-muted);
-            margin-top: auto;
+            padding-top: 8px;
         }
 
         .tagline {
             text-transform: uppercase;
             letter-spacing: 1px;
-            font-weight: bold;
-            color: #444;
+            font-weight: 600;
         }
 
         .log-counter {
@@ -217,7 +220,6 @@
 <body>
 
     <div class="widget-container">
-        <!-- Top Row Controls -->
         <div class="header-controls">
             <div class="mode-toggle">
                 <button class="mode-btn active" id="focusModeBtn" onclick="setMode('focus')">FOCUS</button>
@@ -233,22 +235,19 @@
             </div>
         </div>
 
-        <!-- Center Timer Block -->
         <div class="timer-display">
             <div class="time" id="timeDisplay">25:00</div>
             <div class="time-setter" id="setterControls">
                 <button class="set-btn" onclick="adjustTime(-5)">-</button>
-                <span style="font-size: 12px; color: var(--gray-muted);">5 Min Steps</span>
+                <span style="font-size: 13px; color: var(--gray-muted);">5 Min Steps</span>
                 <button class="set-btn" onclick="adjustTime(5)">+</button>
             </div>
         </div>
 
-        <!-- Central Action Button -->
         <div class="action-container">
             <button class="main-btn" id="actionBtn" onclick="toggleTimer()">START</button>
         </div>
 
-        <!-- Bottom Status Row -->
         <div class="footer">
             <div class="tagline">TIME IS MONEY</div>
             <div class="log-counter" id="logDisplay">Sessions: 0</div>
@@ -258,18 +257,16 @@
     <script>
         let timerInterval = null;
         let isRunning = false;
-        let currentMode = 'focus'; // focus or break
-        let focusDuration = 25 * 60; // default 25 mins
-        let breakDuration = 5 * 60;  // default 5 mins
+        let currentMode = 'focus'; 
+        let focusDuration = 25 * 60; 
+        let breakDuration = 5 * 60;  
         let timeLeft = focusDuration;
         let sessionCount = 0;
 
-        // Audio System State
         let audioCtx = null;
-        let carrierOsc = null;
-        let modulatorOsc = null;
+        let leftOsc = null;
+        let rightOsc = null;
         let gainNode = null;
-        let isAudioPlaying = false;
 
         function updateDisplay() {
             const minutes = Math.floor(timeLeft / 60);
@@ -279,12 +276,10 @@
         }
 
         function setMode(mode) {
-            if (isRunning) return; // Prevent changing setting while countdown runs
+            if (isRunning) return; 
             currentMode = mode;
-            
             document.getElementById('focusModeBtn').classList.toggle('active', mode === 'focus');
             document.getElementById('breakModeBtn').classList.toggle('active', mode === 'break');
-            
             timeLeft = (mode === 'focus') ? focusDuration : breakDuration;
             updateDisplay();
         }
@@ -292,10 +287,9 @@
         function adjustTime(amountMinutes) {
             if (isRunning) return;
             let currentTarget = (currentMode === 'focus') ? focusDuration : breakDuration;
-            
-            // Limit checks: Min 5 minutes, Max 120 minutes (2 Hours)
             let newTarget = currentTarget + (amountMinutes * 60);
-            if (newTarget >= 300 && newTarget <= 7200) {
+            
+            if (newTarget >= 300 && newTarget <= 7200) { // Limit parameters check
                 if (currentMode === 'focus') {
                     focusDuration = newTarget;
                 } else {
@@ -311,26 +305,31 @@
             const setter = document.getElementById('setterControls');
 
             if (isRunning) {
-                // Pause action
                 clearInterval(timerInterval);
                 isRunning = false;
                 btn.innerText = "START";
                 btn.classList.remove('running');
                 setter.style.visibility = "visible";
-                
-                // Stop audio if running
-                if (document.getElementById('audioToggle').checked) {
-                    stopBinauralBeats();
-                }
+                stopBinauralBeats();
             } else {
-                // Start action
                 isRunning = true;
                 btn.innerText = "PAUSE";
                 btn.classList.add('running');
                 setter.style.visibility = "hidden";
                 
-                // Audio Engine Context initialization on gesture rule
                 if (document.getElementById('audioToggle').checked) {
                     startBinauralBeats();
                 }
+
+                timerInterval = setInterval(() => {
+                    if (timeLeft > 0) {
+                        timeLeft--;
+                        updateDisplay();
+                    } else {
+                        clearInterval(timerInterval);
+                        isRunning = false;
+                        btn.innerText = "START";
+                        btn.classList.remove('running');
+                        setter.style.visibility = "visible";
+                        stopBinauralBeats();
 
