@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nothing Focus Widget</title>
+    <style>
+        :root {
+            --bg-color: #000000;
+            --text-color: #ffffff;
+            --accent-color: #ff0000;
+            --gray-muted: #666666;
+            --card-bg: #111111;
+        }
+
+        @font-face {
+            font-family: 'NDOT';
+            src: local('Arial'); /* Fallback; Nothing OS applies its native dot font */
+        }
+
+        body {
+            margin: 0;
+            padding: 16px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'NDOT', monospace, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .widget-container {
+            width: 100%;
+            max-width: 360px;
+            background: var(--card-bg);
+            border: 1px solid #222;
+            border-radius: 24px;
+            padding: 24px;
+            box-sizing: border-box;
+            position: relative;
+            min-height: 380px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .header-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .mode-toggle {
+            display: flex;
+            background: #222;
+            border-radius: 12px;
+            padding: 4px;
+        }
+
+        .mode-btn {
+            background: transparent;
+            border: none;
+            color: var(--gray-muted);
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .mode-btn.active {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        .audio-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #333;
+            transition: .3s;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        .timer-display {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .time {
+            font-size: 54px;
+            letter-spacing: -1px;
+            font-weight: bold;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .time-setter {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            margin-top: 10px;
+        }
+
+        .set-btn {
+            background: #222;
+            border: none;
+            color: var(--text-color);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .set-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .action-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .main-btn {
+            background: var(--text-color);
+            color: var(--bg-color);
+            border: none;
+            padding: 12px 32px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            width: 60%;
+            box-shadow: 0 4px 12px rgba(255,255,255,0.1);
+        }
+
+        .main-btn.running {
+            background: transparent;
+            border: 2px solid var(--text-color);
+            color: var(--text-color);
+        }
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            font-size: 11px;
+            color: var(--gray-muted);
+            margin-top: auto;
+        }
+
+        .tagline {
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+            color: #444;
+        }
+
+        .log-counter {
+            font-variant-numeric: tabular-nums;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="widget-container">
+        <!-- Top Row Controls -->
+        <div class="header-controls">
+            <div class="mode-toggle">
+                <button class="mode-btn active" id="focusModeBtn" onclick="setMode('focus')">FOCUS</button>
+                <button class="mode-btn" id="breakModeBtn" onclick="setMode('break')">BREAK</button>
+            </div>
+            
+            <div class="audio-control">
+                <span>40Hz Beat</span>
+                <label class="switch">
+                    <input type="checkbox" id="audioToggle" onchange="toggleAudio(this.checked)">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Center Timer Block -->
+        <div class="timer-display">
+            <div class="time" id="timeDisplay">25:00</div>
+            <div class="time-setter" id="setterControls">
+                <button class="set-btn" onclick="adjustTime(-5)">-</button>
+                <span style="font-size: 12px; color: var(--gray-muted);">5 Min Steps</span>
+                <button class="set-btn" onclick="adjustTime(5)">+</button>
+            </div>
+        </div>
+
+        <!-- Central Action Button -->
+        <div class="action-container">
+            <button class="main-btn" id="actionBtn" onclick="toggleTimer()">START</button>
+        </div>
+
+        <!-- Bottom Status Row -->
+        <div class="footer">
+            <div class="tagline">TIME IS MONEY</div>
+            <div class="log-counter" id="logDisplay">Sessions: 0</div>
+        </div>
+    </div>
+
+    <script>
+        let timerInterval = null;
+        let isRunning = false;
+        let currentMode = 'focus'; // focus or break
+        let focusDuration = 25 * 60; // default 25 mins
+        let breakDuration = 5 * 60;  // default 5 mins
+        let timeLeft = focusDuration;
+        let sessionCount = 0;
+
+        // Audio System State
+        let audioCtx = null;
+        let carrierOsc = null;
+        let modulatorOsc = null;
+        let gainNode = null;
+        let isAudioPlaying = false;
+
+        function updateDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timeDisplay').innerText = 
+                `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function setMode(mode) {
+            if (isRunning) return; // Prevent changing setting while countdown runs
+            currentMode = mode;
+            
+            document.getElementById('focusModeBtn').classList.toggle('active', mode === 'focus');
+            document.getElementById('breakModeBtn').classList.toggle('active', mode === 'break');
+            
+            timeLeft = (mode === 'focus') ? focusDuration : breakDuration;
+            updateDisplay();
+        }
+
+        function adjustTime(amountMinutes) {
+            if (isRunning) return;
+            let currentTarget = (currentMode === 'focus') ? focusDuration : breakDuration;
+            
+            // Limit checks: Min 5 minutes, Max 120 minutes (2 Hours)
+            let newTarget = currentTarget + (amountMinutes * 60);
+            if (newTarget >= 300 && newTarget <= 7200) {
+                if (currentMode === 'focus') {
+                    focusDuration = newTarget;
+                } else {
+                    breakDuration = newTarget;
+                }
+                timeLeft = newTarget;
+                updateDisplay();
+            }
+        }
+
+        function toggleTimer() {
+            const btn = document.getElementById('actionBtn');
+            const setter = document.getElementById('setterControls');
+
+            if (isRunning) {
+                // Pause action
+                clearInterval(timerInterval);
+                isRunning = false;
+                btn.innerText = "START";
+                btn.classList.remove('running');
+                setter.style.visibility = "visible";
+                
+                // Stop audio if running
+                if (document.getElementById('audioToggle').checked) {
+                    stopBinauralBeats();
+                }
+            } else {
+                // Start action
+                isRunning = true;
+                btn.innerText = "PAUSE";
+                btn.classList.add('running');
+                setter.style.visibility = "hidden";
+                
+                // Audio Engine Context initialization on gesture rule
+                if (document.getElementById('audioToggle').checked) {
+                    startBinauralBeats();
+                }
+
